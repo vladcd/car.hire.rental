@@ -1,0 +1,250 @@
+openapi: 3.0.1
+info:
+  title: Car Hire Rental
+  version: 0.1.0
+  contact:
+    name: Vlad Carcu
+  description: Car Hire Rental API
+servers:
+  - url: http://localhost:{port}
+    description: local environment
+    variables:
+      port:
+        default: '8090'
+tags:
+  - name: rental
+    description: Rental resource
+
+security:
+  - oAuth:
+      - write
+      - read
+
+paths:
+  # The endpoints for the rental resource
+  /rental:
+
+    # Get all rentals
+    get:
+      tags:
+        - rental
+      summary: get rentals
+      description: returns a list of all the rentals, without any filtering
+      operationId: getRentals
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RentalDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    # Add a new rental
+    post:
+      tags:
+        - rental
+      summary: add a new rental
+      description: adds a new rental and returns its id
+      operationId: addRental
+      requestBody:
+        description: The data of the rental to insert.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalDTO'
+            example:
+              user:
+                id: 1
+              car:
+                id: 1
+              startDate: '2020-01-01T12:00:00'
+              endDate: '2020-01-02T14:00:00'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  responses:
+    Created:
+      description: the id of the created entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedDTO'
+    NotFound:
+      description: the results are either empty or couldn't be found
+    Unauthorized:
+      description: unauthorized
+    BadRequest:
+      description: bad request
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationDTO'
+    ServerError:
+      description: internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDTO'
+  schemas:
+    ValidationDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        field:
+          type: string
+        description:
+          type: string
+    ErrorDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    RentalDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: rental id
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        car:
+          $ref: '#/components/schemas/CarDTO'
+        startDate:
+          type: string
+          format: date-time
+          description: the approximate time when the car is picked up
+        endDate:
+          type: string
+          format: date-time
+          description: the approximate time when the car is returned
+        status:
+          $ref: '#/components/schemas/RentalStatus'
+    RentalStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - CANCELLED
+
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: user id
+        username:
+          type: string
+          example: vladcarcu
+        firstName:
+          type: string
+          example: Vlad
+          description: the first name of the user
+        lastName:
+          type: string
+          example: Carcu
+          description: the last name of the user
+        driverLicense:
+          type: string
+          example: BV123456
+          description: the serie and number of the user's driver's license
+        status:
+          $ref: '#/components/schemas/UserStatus'
+    UserStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - DELETED
+
+    CarDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: car id
+        make:
+          type: string
+          example: VW
+          description: the make of the car
+        model:
+          type: string
+          example: Golf 7
+          description: the model of the car
+        year:
+          type: integer
+          format: int32
+          example: 2016
+          description: the year in which the car was built
+        mileage:
+          type: integer
+          format: int32
+          example: 12350
+          description: the approximate mileage when the car is being picked up
+        fuel:
+          $ref: '#/components/schemas/FuelType'
+        carClass:
+          $ref: '#/components/schemas/CarClass'
+        status:
+          $ref: '#/components/schemas/CarStatus'
+    FuelType:
+      type: string
+      enum:
+        - GAS
+        - DIESEL
+    CarClass:
+      type: string
+      enum:
+        - A-segment
+        - B-segment
+        - C-segment
+        - D-segment
+        - E-segment
+        - F-segment
+    CarStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - DELETED
+
+    CreatedDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: the id of the created entity
+  securitySchemes:
+    oAuth:
+      type: oauth2
+      description: This API uses OAuth2 with the password flow
+      flows:
+        password:
+          tokenUrl: http://localhost:8080/oauth/token
+          scopes:
+            read: get information from the API
+            write: use the API to make changes to the supporting data model

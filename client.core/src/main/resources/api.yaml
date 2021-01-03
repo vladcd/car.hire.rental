@@ -1,0 +1,320 @@
+openapi: 3.0.1
+info:
+  title: Car Hire API
+  version: 0.1.0
+  contact:
+    name: Vlad Carcu
+  description: Car Hire API
+servers:
+  - url: http://localhost:{port}
+    description: local environment
+    variables:
+      port:
+        default: '8080'
+tags:
+  - name: user
+    description: User resource
+
+paths:
+  # The endpoints for the user resource
+  /user:
+
+    # Get all users
+    get:
+      tags:
+        - user
+      summary: get users
+      description: returns a list of all the users, without any filtering
+      operationId: getUsers
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    # Add a new user
+    post:
+      tags:
+        - user
+      summary: add a new user
+      description: adds a new user and returns its id
+      operationId: addUser
+      requestBody:
+        description: The data of the user to insert.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+            example:
+              email: vladcarcu@email.com
+              username: vladcarcu
+              password: secret
+              firstName: Vlad
+              lastName: Carcu
+              countryOfResidence:
+                id: 1
+              driverLicense: BV123456
+              status: ACTIVE
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  # The endpoints for individual user related operations
+  /user/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+
+    # Get a user by id
+    get:
+      tags:
+        - user
+      summary: get a user
+      description: returns the details for a user, based on id, except the password
+      operationId: getUser
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    # Delete a user by id
+    delete:
+      tags:
+        - user
+      summary: delete a user
+      description: soft deletes a user
+      operationId: deleteUser
+      responses:
+        '200':
+          description: success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    # Add a new user
+    patch:
+      tags:
+        - user
+      summary: update an existing user
+      description: allows updating an existing user. Existing fields can't be set to null. The id, username, password and status are always ignored.
+      operationId: patchUser
+      requestBody:
+        description: The fields of the user to change
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+            example:
+              email: vladcarcu@email.com
+              firstName: Vlad
+              lastName: Carcu
+              countryOfResidence:
+                id: 2
+              driverLicense: BV123456
+      responses:
+        '200':
+          description: success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  responses:
+    Created:
+      description: the id of the created entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedDTO'
+    NotFound:
+      description: the results are either empty or couldn't be found
+    Unauthorized:
+      description: unauthorized
+    BadRequest:
+      description: bad request
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationDTO'
+    ServerError:
+      description: internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDTO'
+  schemas:
+    ValidationDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        field:
+          type: string
+        description:
+          type: string
+    ErrorDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: user id
+        email:
+          type: string
+          format: email
+          example: vladcarcu@email.com
+          description: user email address
+        username:
+          type: string
+          example: vladcarcu
+        password:
+          type: string
+          format: password
+          example: secret
+        firstName:
+          type: string
+          example: Vlad
+          description: the first name of the user
+        lastName:
+          type: string
+          example: Carcu
+          description: the last name of the user
+        countryOfResidence:
+          $ref: '#/components/schemas/CountryDTO'
+        driverLicense:
+          type: string
+          example: BV123456
+          description: the serie and number of the user's driver's license
+        status:
+          $ref: '#/components/schemas/UserStatus'
+    CountryDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: country id
+        name:
+          type: string
+          example: Romania
+          description: the name of the country
+        isoCode:
+          type: string
+          example: ROU
+          description: the iso code of the country
+    UserStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - DELETED
+
+    CarDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: car id
+        make:
+          type: string
+          example: VW
+          description: the make of the car
+        model:
+          type: string
+          example: Golf 7
+          description: the model of the car
+        year:
+          type: integer
+          format: int32
+          example: 2016
+          description: the year in which the car was built
+        mileage:
+          type: integer
+          format: int32
+          example: 12350
+          description: the approximate mileage when the car is being picked up
+        fuel:
+          $ref: '#/components/schemas/FuelType'
+        carClass:
+          $ref: '#/components/schemas/CarClass'
+        status:
+          $ref: '#/components/schemas/CarStatus'
+    FuelType:
+      type: string
+      enum:
+        - GAS
+        - DIESEL
+    CarClass:
+      type: string
+      enum:
+        - A-segment
+        - B-segment
+        - C-segment
+        - D-segment
+        - E-segment
+        - F-segment
+    CarStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - DELETED
+
+    CreatedDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: the id of the created entity
