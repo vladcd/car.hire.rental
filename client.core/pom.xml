@@ -39,6 +39,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot2</artifactId>
+            <version>${resilience4j-spring-boot2.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,6 +69,7 @@
                                 <modelPackage>ro.agilehub.javacourse.car.hire.rental.client.core.model</modelPackage>
                                 <configPackage>ro.agilehub.javacourse.car.hire.rental.client.core.configuration</configPackage>
                                 <library>spring-cloud</library>
+                                <interfaceOnly>true</interfaceOnly>
                             </configOptions>
                         </configuration>
                     </execution>

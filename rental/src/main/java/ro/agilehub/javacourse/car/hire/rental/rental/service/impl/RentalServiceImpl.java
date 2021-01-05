@@ -9,7 +9,6 @@ import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalDO;
 @Service
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
-
     private final UserApi userApi;
 
     @Override
@@ -17,4 +16,5 @@ public class RentalServiceImpl implements RentalService {
         var userDTOResponseEntity = userApi.getUser(example.getUser().getId());
         return 123;
     }
+
 }
