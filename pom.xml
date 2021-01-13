@@ -16,10 +16,11 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <module>rental</module>
-        <module>api</module>
+        <module>repository</module>
+        <module>controller</module>
         <module>boot</module>
         <module>client.core</module>
+        <module>domain</module>
     </modules>
 
     <properties>

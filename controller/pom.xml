@@ -9,12 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>client.core</artifactId>
-
-    <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
-    </properties>
+    <artifactId>controller</artifactId>
 
     <dependencies>
         <dependency>
@@ -24,8 +19,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -33,8 +34,9 @@
             <version>${springfox.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -42,14 +44,9 @@
             <version>${databind.nullable.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot2</artifactId>
-            <version>${resilience4j-spring-boot2.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${spring-openapi.version}</version>
         </dependency>
     </dependencies>
 
@@ -65,17 +62,15 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/public/api.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <java8>true</java8>
                                 <dateLibrary>java8</dateLibrary>
-                                <apiPackage>ro.agilehub.javacourse.car.hire.rental.client.core.specification</apiPackage>
-                                <modelPackage>ro.agilehub.javacourse.car.hire.rental.client.core.model</modelPackage>
-                                <configPackage>ro.agilehub.javacourse.car.hire.rental.client.core.configuration</configPackage>
-                                <library>spring-cloud</library>
                                 <interfaceOnly>true</interfaceOnly>
+                                <apiPackage>ro.agilehub.javacourse.car.hire.rental.api.specification</apiPackage>
+                                <modelPackage>ro.agilehub.javacourse.car.hire.rental.api.model</modelPackage>
                             </configOptions>
                         </configuration>
                     </execution>
