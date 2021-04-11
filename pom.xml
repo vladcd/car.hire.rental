@@ -17,7 +17,6 @@
 
     <modules>
         <module>rental</module>
-        <module>api</module>
         <module>boot</module>
         <module>client.core</module>
     </modules>
