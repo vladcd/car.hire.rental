@@ -2,33 +2,29 @@ package ro.agilehub.javacourse.car.hire.rental.rental.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ro.agilehub.javacourse.car.hire.rental.client.core.specification.CarApi;
-import ro.agilehub.javacourse.car.hire.rental.client.core.specification.UserApi;
-import ro.agilehub.javacourse.car.hire.rental.rental.repository.definition.RentalRepository;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.definition.RentalService;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalDO;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalStatusDO;
-import ro.agilehub.javacourse.car.hire.rental.rental.service.mapper.RentalDOMapper;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.manager.CarManager;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.manager.RentalManager;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.manager.UserManager;
 
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class DefaultRentalService implements RentalService {
-    private final UserApi userApi;
-    private final CarApi carApi;
-    private final RentalRepository rentalRepository;
-    private final RentalDOMapper rentalDOMapper;
+    private final UserManager userManager;
+    private final CarManager carManager;
+    private final RentalManager rentalManager;
 
     @Override
     public Integer createNewRental(RentalDO example) {
-        var userDTOResponseEntity = userApi.getUser(example.getUser().getId());
-        var carDTOResponseEntity = carApi.getCar(example.getCar().getId());
-        if (userDTOResponseEntity.hasBody() && carDTOResponseEntity.hasBody()) {
+        var userDO = userManager.getUser(example.getUser().getId());
+        var carDO = carManager.getCar(example.getCar().getId());
+        if (userDO.isPresent() && carDO.isPresent()) {
             example.setStatus(RentalStatusDO.ACTIVE);
-            var newRental = rentalDOMapper.toRental(example);
-            rentalRepository.save(newRental);
-            return newRental.getId();
+            return rentalManager.save(example);
         }
         throw new NoSuchElementException();
     }
