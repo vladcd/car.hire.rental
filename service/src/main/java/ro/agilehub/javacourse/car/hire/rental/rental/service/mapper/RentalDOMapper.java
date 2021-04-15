@@ -7,7 +7,7 @@ import ro.agilehub.javacourse.car.hire.rental.client.core.model.UserDTO;
 import ro.agilehub.javacourse.car.hire.rental.rental.repository.entity.Rental;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalDO;
 
-@Mapper(componentModel = "spring", uses = {CarDOMapper.class, UserDOMapper.class, TimestampMapper.class})
+@Mapper(componentModel = "spring", uses = {TimestampMapper.class})
 public interface RentalDOMapper {
 
     @Mapping(target = "id", source = "rental.id")

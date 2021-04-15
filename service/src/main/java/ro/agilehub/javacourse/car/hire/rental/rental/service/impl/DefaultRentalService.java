@@ -17,8 +17,8 @@ import java.util.NoSuchElementException;
 public class DefaultRentalService implements RentalService {
     private final UserApi userApi;
     private final CarApi carApi;
-    private final RentalDOMapper rentalDOMapper;
     private final RentalRepository rentalRepository;
+    private final RentalDOMapper rentalDOMapper;
 
     @Override
     public Integer createNewRental(RentalDO example) {
