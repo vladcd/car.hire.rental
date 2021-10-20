@@ -7,7 +7,7 @@ import ro.agilehub.javacourse.car.hire.rental.api.model.CreatedDTO;
 import ro.agilehub.javacourse.car.hire.rental.api.model.RentalDTO;
 import ro.agilehub.javacourse.car.hire.rental.api.specification.RentalApi;
 import ro.agilehub.javacourse.car.hire.rental.rental.controller.mapper.RentalDTOMapper;
-import ro.agilehub.javacourse.car.hire.rental.rental.service.definition.RentalService;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.definition.RentalUseCase;
 
 import javax.validation.Valid;
 
@@ -15,12 +15,12 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class RentalController implements RentalApi {
 
-    private final RentalService rentalService;
+    private final RentalUseCase rentalUseCase;
     private final RentalDTOMapper rentalDTOMapper;
 
     @Override
     public ResponseEntity<CreatedDTO> addRental(@Valid RentalDTO rentalDTO) {
-        var id = rentalService.createNewRental(rentalDTOMapper.toRentalDO(rentalDTO));
+        var id = rentalUseCase.createNewRental(rentalDTOMapper.toRentalDO(rentalDTO));
         return ResponseEntity.ok(new CreatedDTO().id(id));
     }
 }

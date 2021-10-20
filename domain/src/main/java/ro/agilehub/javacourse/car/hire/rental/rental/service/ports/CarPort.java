@@ -1,10 +1,10 @@
-package ro.agilehub.javacourse.car.hire.rental.rental.service.manager;
+package ro.agilehub.javacourse.car.hire.rental.rental.service.ports;
 
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.CarDO;
 
 import java.util.Optional;
 
-public interface CarManager {
+public interface CarPort {
 
     Optional<CarDO> getCar(Integer id);
 }

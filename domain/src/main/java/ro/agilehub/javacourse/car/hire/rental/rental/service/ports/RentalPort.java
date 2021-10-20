@@ -1,8 +1,8 @@
-package ro.agilehub.javacourse.car.hire.rental.rental.service.manager;
+package ro.agilehub.javacourse.car.hire.rental.rental.service.ports;
 
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalDO;
 
-public interface RentalManager {
+public interface RentalPort {
 
     Integer save(RentalDO input);
 }
