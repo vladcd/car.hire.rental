@@ -15,11 +15,6 @@ tags:
   - name: rental
     description: Rental resource
 
-security:
-  - oAuth:
-      - write
-      - read
-
 paths:
   # The endpoints for the rental resource
   /rental:
@@ -238,13 +233,3 @@ components:
           type: integer
           format: int32
           description: the id of the created entity
-  securitySchemes:
-    oAuth:
-      type: oauth2
-      description: This API uses OAuth2 with the password flow
-      flows:
-        password:
-          tokenUrl: http://localhost:8080/oauth/token
-          scopes:
-            read: get information from the API
-            write: use the API to make changes to the supporting data model
