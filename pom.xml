@@ -21,6 +21,7 @@
         <module>client.core</module>
         <module>controller</module>
         <module>repository</module>
+        <module>mongo-repository</module>
     </modules>
 
     <properties>
