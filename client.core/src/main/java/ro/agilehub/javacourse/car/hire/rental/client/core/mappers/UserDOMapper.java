@@ -1,4 +1,4 @@
-package ro.agilehub.javacourse.car.hire.rental.rental.service.mapper;
+package ro.agilehub.javacourse.car.hire.rental.client.core.mappers;
 
 import org.mapstruct.Mapper;
 import ro.agilehub.javacourse.car.hire.rental.client.core.model.UserDTO;

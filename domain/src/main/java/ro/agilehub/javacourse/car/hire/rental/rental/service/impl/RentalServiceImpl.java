@@ -2,56 +2,41 @@ package ro.agilehub.javacourse.car.hire.rental.rental.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ro.agilehub.javacourse.car.hire.rental.client.core.specification.CarApi;
-import ro.agilehub.javacourse.car.hire.rental.client.core.specification.UserApi;
-import ro.agilehub.javacourse.car.hire.rental.rental.repository.definition.RentalRepository;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.definition.RentalService;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalDO;
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalStatusDO;
-import ro.agilehub.javacourse.car.hire.rental.rental.service.mapper.CarDOMapper;
-import ro.agilehub.javacourse.car.hire.rental.rental.service.mapper.RentalDOMapper;
-import ro.agilehub.javacourse.car.hire.rental.rental.service.mapper.UserDOMapper;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.ports.CarPort;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.ports.RentalPort;
+import ro.agilehub.javacourse.car.hire.rental.rental.service.ports.UserPort;
 
 import java.util.NoSuchElementException;
 
 @Component
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
-    private final UserApi userApi;
-    private final CarApi carApi;
-    private final RentalRepository rentalRepository;
-    private final RentalDOMapper rentalDOMapper;
-
-    private final UserDOMapper userDOMapper;
-
-    private final CarDOMapper carDOMapper;
-
+    private final UserPort userPort;
+    private final CarPort carPort;
+    private final RentalPort rentalPort;
     @Override
     public Integer createNewRental(RentalDO example) {
-        var userDTOResponse = userApi.getUser(example.getUser().getId());
-        var carDTOResponse = carApi.getCar(example.getCar().getId());
-        if (userDTOResponse.hasBody() && carDTOResponse.hasBody()) {
+        var userDTOResponse = userPort.getUser(example.getUser().getId());
+        var carDTOResponse = carPort.getCar(example.getCar().getId());
+        if (userDTOResponse.isPresent() && carDTOResponse.isPresent()) {
             example.setStatus(RentalStatusDO.ACTIVE);
-            var rental = rentalDOMapper.toRental(example);
-            return rentalRepository.save(rental).getId();
+            return rentalPort.save(example);
         }
         throw new NoSuchElementException();
     }
 
     @Override
     public RentalDO retrieveRental(Integer id) {
-        var rental = rentalRepository.findById(id).orElseThrow();
-        RentalDO rentalDO = rentalDOMapper.toRentalDO(rental);
+        var rentalDO = rentalPort.getRental(id).orElseThrow();
 
-        var userDTOResponse = userApi.getUser(rental.getUserId());
-        if(userDTOResponse.hasBody()){
-            rentalDO.setUser(userDOMapper.toUserDO(userDTOResponse.getBody()));
-        }
+        userPort.getUser(rentalDO.getUser().getId())
+                .ifPresent(rentalDO::setUser);
 
-        var carDTOResponse = carApi.getCar(rental.getCarId());
-        if(carDTOResponse.hasBody()){
-            rentalDO.setCar(carDOMapper.toCarDO(carDTOResponse.getBody()));
-        }
+        carPort.getCar(rentalDO.getCar().getId())
+                .ifPresent(rentalDO::setCar);
 
         return rentalDO;
     }
