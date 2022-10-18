@@ -1,4 +1,4 @@
-package ro.agilehub.javacourse.car.hire.rental.rental.repository.mapper;
+package ro.agilehub.javacourse.car.hire.rental.rental.service.mapper;
 
 import org.mapstruct.Mapper;
 

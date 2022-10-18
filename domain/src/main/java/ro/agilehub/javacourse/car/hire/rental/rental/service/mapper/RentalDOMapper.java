@@ -1,4 +1,4 @@
-package ro.agilehub.javacourse.car.hire.rental.rental.repository.mapper;
+package ro.agilehub.javacourse.car.hire.rental.rental.service.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,4 +11,6 @@ public interface RentalDOMapper {
     @Mapping(target = "carId", source = "car.id")
     @Mapping(target = "userId", source = "user.id")
     Rental toRental(RentalDO rentalDO);
+
+    RentalDO toRentalDO(Rental rental);
 }

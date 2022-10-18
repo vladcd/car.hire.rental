@@ -2,7 +2,9 @@ package ro.agilehub.javacourse.car.hire.rental.rental.service.definition;
 
 import ro.agilehub.javacourse.car.hire.rental.rental.service.domain.RentalDO;
 
-public interface RentalUseCase {
+public interface RentalService {
 
     Integer createNewRental(RentalDO example);
+
+    RentalDO retrieveRental(Integer id);
 }
